@@ -24,8 +24,8 @@ rotenc_handle_t handle = {};
 // RMT.
 uint32_t frequency = 1;
 #include "driver/rmt.h"
-static const rmt_channel_t channel = RMT_CHANNEL_0;
 static const gpio_num_t rmt1 = GPIO_NUM_13;
+static const rmt_channel_t channel = RMT_CHANNEL_0;
 static const rmt_item32_t morse[] = {{{{32767, 1, 32767, 1}}},
                                      {{{32767, 1, 32767, 1}}},
                                      {{{32767, 1, 32767, 1}}},
