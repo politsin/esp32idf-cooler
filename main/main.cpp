@@ -6,15 +6,12 @@
 #include "freertos/task.h"
 
 // Tasks
+#include "task/uartTasks.h"
 #include "task/blinkTask.h"
 #include "task/encoderTask.h"
-#include "task/uartTasks.h"
 
 #define MAINTAG "MAIN"
-TaskHandle_t tx;
-TaskHandle_t rx;
-TaskHandle_t blink;
-TaskHandle_t encoder;
+
 extern "C" void app_main(void) {
   uint32_t min = 768 + configSTACK_OVERHEAD_TOTAL;
   uartInit();

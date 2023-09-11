@@ -2,19 +2,15 @@
 #define RXD_PIN (GPIO_NUM_5)
 
 
-// #include "uartTasks.h"
-#include "driver/gpio.h"
 #include "driver/uart.h"
 #include "string.h"
-#include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
 #define BLINK_TAG "BLINK"
 static const int RX_BUF_SIZE = 1024;
 
-// TaskHandle_t tx;
-// TaskHandle_t rx;
 
+#include "uartTasks.h"
+TaskHandle_t tx;
+TaskHandle_t rx;
 void uartInit(void) {
   const uart_config_t uart_config = {
       .baud_rate = 115200,

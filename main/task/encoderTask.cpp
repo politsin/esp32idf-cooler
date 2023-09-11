@@ -1,7 +1,3 @@
-// #include "encoderTask.h"
-#include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
 
 #include <math.h>
 #include <stdbool.h>
@@ -11,15 +7,15 @@
 #include <iostream>
 using std::string;
 
+#include "encoderTask.h"
 #include "rotary_encoder.h"
 #define ENC_TAG "ENCODER"
 #define CONFIG_REPORT_MODE_CALLBACK true
 #define CONFIG_ENCODER_DEBUG true
-#include "encoderTask.h"
 
 // ENCODER.
-static const gpio_num_t encoderS1 = GPIO_NUM_36;
-static const gpio_num_t encoderS2 = GPIO_NUM_0;
+static const gpio_num_t encoderS1 = GPIO_NUM_0;
+static const gpio_num_t encoderS2 = GPIO_NUM_36;
 static const gpio_num_t encoderBtn = GPIO_NUM_34;
 static const uint32_t debouncsEnc = 100;
 static const uint32_t debouncsBtn = 100;
@@ -42,7 +38,7 @@ static const rmt_item32_t morse[] = {{{{32767, 1, 32767, 1}}},
                                      // RMT end marker
                                      {{{0, 1, 0, 0}}}};
 
-// TaskHandle_t encoder;
+TaskHandle_t encoder;
 void encoderTask(void *pvParam) {
   uint32_t tiks = 0;
   vTaskDelay(pdMS_TO_TICKS(2000));
