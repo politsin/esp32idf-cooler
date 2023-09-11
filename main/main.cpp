@@ -19,7 +19,7 @@ extern "C" void app_main(void) {
   uartInit();
   xTaskCreate(txTask, "rx", min * 4, NULL, configMAX_PRIORITIES, &tx);
   xTaskCreate(rxTask, "tx", min * 4, NULL, configMAX_PRIORITIES - 1, &rx);
-  xTaskCreate(fanTask, "fan", min * 2, NULL, 1, &fan);
+  xTaskCreate(fanTask, "fan", min * 4, NULL, 1, &fan);
   xTaskCreate(blinkTask, "blink", min * 2, NULL, 1, &blink);
   xTaskCreate(encoderTask, "encoder", min * 4, NULL, 1, &encoder);
 }
