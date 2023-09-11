@@ -6,6 +6,7 @@
 #include "freertos/task.h"
 
 // Tasks
+#include "config.h"
 #include "task/fanTask.h"
 #include "task/uartTasks.h"
 #include "task/blinkTask.h"
