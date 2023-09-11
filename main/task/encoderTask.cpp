@@ -1,3 +1,4 @@
+// #include "encoderTask.h"
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -41,6 +42,7 @@ static const rmt_item32_t morse[] = {{{{32767, 1, 32767, 1}}},
                                      // RMT end marker
                                      {{{0, 1, 0, 0}}}};
 
+// TaskHandle_t encoder;
 void encoderTask(void *pvParam) {
   uint32_t tiks = 0;
   vTaskDelay(pdMS_TO_TICKS(2000));

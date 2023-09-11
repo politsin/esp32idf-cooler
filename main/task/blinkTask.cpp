@@ -1,5 +1,6 @@
 // #include <blinkTask.h> WTF o.O
 // Blink #22 #19.
+// #include "blinkTask.h"
 #include "driver/gpio.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -10,6 +11,7 @@
 #include <esp_log.h>
 #define BLINK_TAG "BLINK"
 
+// TaskHandle_t blink;
 void blinkTask(void *pvParam) {
   esp_rom_gpio_pad_select_gpio(LED_PIN1);
   esp_rom_gpio_pad_select_gpio(LED_PIN2);
