@@ -32,7 +32,7 @@ void fanTask(void *pvParam) {
       .channel = LEDC_CHANNEL,
       .intr_type = LEDC_INTR_DISABLE,
       .timer_sel = LEDC_TIMER,
-      .duty = 70, // Set duty to 0%
+      .duty = 70, // Set duty to 70%
       .hpoint = 0,
   };
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
