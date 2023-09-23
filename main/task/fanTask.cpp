@@ -3,6 +3,7 @@
 #define FAN_PWM_PIN GPIO_NUM_19
 #define FAN_TACHO_PIN GPIO_NUM_23
 
+#include <cmath>
 #include "fanTask.h"
 #include "driver/ledc.h"
 
@@ -27,23 +28,28 @@ void fanTask(void *pvParam) {
 
   // Prepare and then apply the LEDC PWM channel configuration
   ledc_channel_config_t ledc_channel = {
-      .gpio_num = GPIO_NUM_19,
+      .gpio_num = FAN_PWM_PIN,
       .speed_mode = LEDC_MODE,
       .channel = LEDC_CHANNEL,
       .intr_type = LEDC_INTR_DISABLE,
       .timer_sel = LEDC_TIMER,
-      .duty = 70, // Set duty to 70%
+      .duty = 20, // Set duty to 70%
       .hpoint = 0,
   };
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
+  const TickType_t xBlockTime = pdMS_TO_TICKS(100);
+  uint32_t notify;
   while (true) {
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-    // Set duty to 50%
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, LEDC_DUTY));
-    // Update duty to apply the new value
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
-    if (true) {
-      ESP_LOGW(FAN_TAG, "FAN!");
+    vTaskDelay(xBlockTime);
+    if (xTaskNotifyWait(0, 0, &notify, 0) == pdTRUE) {
+      // Set duty to 50%
+      uint32_t duty = (pow(2, 13) - 1) * notify / 100;
+      ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty));
+      // Update duty to apply the new value
+      ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
+      if (true) {
+        ESP_LOGW(FAN_TAG, "FAN! %lu", notify);
+      }
     }
   }
 }

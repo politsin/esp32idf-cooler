@@ -7,6 +7,7 @@
 #include <iostream>
 using std::string;
 
+#include "fanTask.h"
 #include "encoderTask.h"
 #include "rotary_encoder.h"
 #define ENC_TAG "ENCODER"
@@ -22,7 +23,7 @@ static const uint32_t debouncsBtn = 100;
 rotenc_handle_t handle = {};
 
 // RMT.
-uint32_t frequency = 1;
+uint32_t frequency = 10;
 #include "driver/rmt.h"
 static const gpio_num_t rmt1 = GPIO_NUM_13;
 static const rmt_channel_t channel = RMT_CHANNEL_0;
@@ -41,7 +42,6 @@ static const rmt_item32_t morse[] = {{{{32767, 1, 32767, 1}}},
 TaskHandle_t encoder;
 void encoderTask(void *pvParam) {
   uint32_t tiks = 0;
-  vTaskDelay(pdMS_TO_TICKS(2000));
   // configureRmt(611, 1);
   configureEncoderPins();
   const TickType_t xBlockTime = pdMS_TO_TICKS(50);
@@ -123,12 +123,19 @@ void configureEncoderPins() {
 
 static void button_callback(void *arg) {
   // rotenc_handle_t *handle = (rotenc_handle_t *)arg;
+  frequency = 0;
   ESP_LOGI(ENC_TAG, "Push button");
 }
 static void event_callback(rotenc_event_t event) {
-  frequency = event.position + 611;
-  // xTaskNotify(numDisplay, event.position, eSetValueWithOverwrite);
-  configureRmt(frequency, false);
+  frequency = event.position * 10;
+  if (event.position < 0) {
+    frequency = 0;
+  }
+  if (event.position > 10) {
+    frequency = 100;
+  }
+  // configureRmt(frequency, false);
+  xTaskNotify(fan, frequency, eSetValueWithOverwrite);
 
 #if CONFIG_ENCODER_DEBUG
   ESP_LOGI(ENC_TAG, "Event: position %ld, direction %s", event.position,
