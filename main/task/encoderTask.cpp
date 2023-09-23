@@ -24,57 +24,16 @@ rotenc_handle_t handle = {};
 
 // RMT.
 uint32_t frequency = 10;
-#include "driver/rmt.h"
-static const gpio_num_t rmt1 = GPIO_NUM_13;
-static const rmt_channel_t channel = RMT_CHANNEL_0;
-static const rmt_item32_t morse[] = {{{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     {{{32767, 1, 32767, 1}}},
-                                     // RMT end marker
-                                     {{{0, 1, 0, 0}}}};
 
 TaskHandle_t encoder;
 void encoderTask(void *pvParam) {
   uint32_t tiks = 0;
-  // configureRmt(611, 1);
   configureEncoderPins();
   const TickType_t xBlockTime = pdMS_TO_TICKS(50);
   while (true) {
     tiks++;
     // ESP_LOGE(ENC_TAG, "encoder= %d ticks", frequency);
     vTaskDelay(xBlockTime);
-    // configureRmt(1 + tiks * 500, false);
-    // rmt_write_items(channel, morse, sizeof(morse) / sizeof(morse[0]), false);
-  }
-}
-
-void configureRmt(uint32_t freq, bool init) {
-  rmt_config_t config = RMT_DEFAULT_CONFIG_TX(rmt1, channel);
-  // enable the carrier to be able to hear the Morse sound
-  // if the RMT_TX_GPIO is connected to a speaker
-  config.tx_config.carrier_en = true;
-  config.tx_config.carrier_duty_percent = 50;
-  // set audible career frequency of 611 Hz
-  // actually 611 Hz is the minimum, that can be set
-  // with current implementation of the RMT API
-  if (freq < 611) {
-    freq = 611;
-  }
-  config.tx_config.carrier_freq_hz = freq;
-  // set the maximum clock divider to be able to output
-  // RMT pulses in range of about one hundred milliseconds
-  config.clk_div = 255;
-
-  rmt_config(&config);
-  // ESP_LOGW(ENC_TAG, "Set freq %d", freq);
-  if (init) {
-    rmt_driver_install(config.channel, 0, 0);
   }
 }
 
@@ -134,7 +93,6 @@ static void event_callback(rotenc_event_t event) {
   if (event.position > 10) {
     frequency = 100;
   }
-  // configureRmt(frequency, false);
   xTaskNotify(fan, frequency, eSetValueWithOverwrite);
 
 #if CONFIG_ENCODER_DEBUG
