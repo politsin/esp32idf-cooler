@@ -27,11 +27,9 @@ uint32_t frequency = 10;
 
 TaskHandle_t encoder;
 void encoderTask(void *pvParam) {
-  uint32_t tiks = 0;
   configureEncoderPins();
-  const TickType_t xBlockTime = pdMS_TO_TICKS(50);
+  const TickType_t xBlockTime = pdMS_TO_TICKS(1000);
   while (true) {
-    tiks++;
     // ESP_LOGE(ENC_TAG, "encoder= %d ticks", frequency);
     vTaskDelay(xBlockTime);
   }
@@ -40,14 +38,14 @@ void encoderTask(void *pvParam) {
 /**
  * Coficure D39 Analog Input (vRef).
  */
-void loopEsamples() {
-#if CONFIG_REPORT_MODE_QUEUE
+void loopExamples() {
+#if CONFIG_REPORT_MODE_CALLBACK
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+#elif CONFIG_REPORT_MODE_QUEUE
   rotenc_event_t event = {};
   if (rotenc_wait_event(&handle, &event) == ESP_OK) {
     event_callback(event);
   }
-#elif CONFIG_REPORT_MODE_CALLBACK
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
 #elif CONFIG_REPORT_MODE_POLLING
   vTaskDelay(100 / portTICK_PERIOD_MS);
   rotenc_event_t event = {0};
