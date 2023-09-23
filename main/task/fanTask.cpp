@@ -33,7 +33,7 @@ void fanTask(void *pvParam) {
       .channel = LEDC_CHANNEL,
       .intr_type = LEDC_INTR_DISABLE,
       .timer_sel = LEDC_TIMER,
-      .duty = 20, // Set duty to 70%
+      .duty = LEDC_DUTY,
       .hpoint = 0,
   };
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
@@ -42,7 +42,7 @@ void fanTask(void *pvParam) {
   while (true) {
     vTaskDelay(xBlockTime);
     if (xTaskNotifyWait(0, 0, &notify, 0) == pdTRUE) {
-      // Set duty to 50%
+      // Set duty.
       uint32_t duty = (pow(2, 13) - 1) * notify / 100;
       ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty));
       // Update duty to apply the new value
