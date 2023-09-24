@@ -1,7 +1,7 @@
 
 #define FAN_TAG "FAN"
 #define FAN_PWM_PIN GPIO_NUM_19
-#define FAN_TACHO_PIN GPIO_NUM_23
+// #define FAN_TACHO_PIN GPIO_NUM_23
 
 #include <cmath>
 #include "fanTask.h"
@@ -37,8 +37,8 @@ void fanTask(void *pvParam) {
       .hpoint = 0,
   };
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
-  const TickType_t xBlockTime = pdMS_TO_TICKS(100);
   uint32_t notify;
+  const TickType_t xBlockTime = pdMS_TO_TICKS(100);
   while (true) {
     vTaskDelay(xBlockTime);
     if (xTaskNotifyWait(0, 0, &notify, 0) == pdTRUE) {
