@@ -17,10 +17,10 @@ void tachoTask(void *pvParam) {
   gpio_set_intr_type(FAN_TACHO_PIN, GPIO_INTR_POSEDGE);
   gpio_isr_handler_add(FAN_TACHO_PIN, tacho_interrupt, NULL);
   const TickType_t xBlockTime = pdMS_TO_TICKS(1000);
-  static const char *TX_TASK_TAG = "FAN:";
+  static const char *TX_TASK_TAG = "TACHO";
   while (true) {
     vTaskDelay(xBlockTime);
-    ESP_LOGW(FAN_TACHO_TAG, "RPM= %ld", counter * 30);
+    // ESP_LOGW(FAN_TACHO_TAG, "RPM= %ld", counter * 30);
     char str[80];
     sprintf(str, "RPM:%ld\n", counter * 30);
     uartSendData(TX_TASK_TAG, str);

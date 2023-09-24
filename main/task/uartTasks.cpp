@@ -54,7 +54,7 @@ void rxTask(void *pvParam) {
     if (rxBytes > 0) {
       data[rxBytes] = 0;
       ESP_LOGI(RX_TASK_TAG, "Read %d bytes: >>>%s<<<", rxBytes, data);
-      ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_ERROR);
+      // ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_ERROR);
     }
   }
   free(data);
