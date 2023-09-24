@@ -1,10 +1,10 @@
-#define TXD_PIN (GPIO_NUM_4)
-#define RXD_PIN (GPIO_NUM_5)
+#define TXD_PIN (GPIO_NUM_14)
+#define RXD_PIN (GPIO_NUM_12)
 
 
 #include "driver/uart.h"
 #include "string.h"
-#define BLINK_TAG "BLINK"
+#define UART_TAG "UART"
 static const int RX_BUF_SIZE = 1024;
 
 
@@ -30,19 +30,21 @@ void uartInit(void) {
 int sendData(const char *logName, const char *data) {
   const int len = strlen(data);
   const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
-  // ESP_LOGI(logName, "Wrote %d bytes", txBytes);
+  ESP_LOGI(logName, "Wrote %d bytes", txBytes);
   return txBytes;
 }
 
+// Send.
 void txTask(void *pvParam) {
   static const char *TX_TASK_TAG = "TX_TASK";
   esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
   while (1) {
-    sendData(TX_TASK_TAG, "Hello world");
+    sendData(TX_TASK_TAG, "Hello world\n");
     vTaskDelay(2000 / portTICK_PERIOD_MS);
   }
 }
 
+// Ressive
 void rxTask(void *pvParam) {
   static const char *RX_TASK_TAG = "RX_TASK";
   esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
