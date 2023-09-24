@@ -27,7 +27,7 @@ void uartInit(void) {
                UART_PIN_NO_CHANGE);
 }
 
-int sendData(const char *logName, const char *data) {
+int uartSendData(const char *logName, const char *data) {
   const int len = strlen(data);
   const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
   ESP_LOGI(logName, "Wrote %d bytes", txBytes);
@@ -36,17 +36,17 @@ int sendData(const char *logName, const char *data) {
 
 // Send.
 void txTask(void *pvParam) {
-  static const char *TX_TASK_TAG = "TX_TASK";
+  static const char *TX_TASK_TAG = "TX";
   esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
   while (1) {
-    sendData(TX_TASK_TAG, "Hello world\n");
+    // uartSendData(TX_TASK_TAG, "Hello world\n");
     vTaskDelay(2000 / portTICK_PERIOD_MS);
   }
 }
 
 // Ressive
 void rxTask(void *pvParam) {
-  static const char *RX_TASK_TAG = "RX_TASK";
+  static const char *RX_TASK_TAG = "RX";
   esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
   uint8_t *data = (uint8_t *)malloc(RX_BUF_SIZE + 1);
   while (1) {

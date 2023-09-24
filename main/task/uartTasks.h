@@ -9,5 +9,6 @@
 extern TaskHandle_t tx;
 extern TaskHandle_t rx;
 void uartInit();
+int uartSendData(const char *logName, const char *data);
 void txTask(void *pvParam);
 void rxTask(void *pvParam);

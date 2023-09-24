@@ -7,6 +7,7 @@
 #define FAN_TACHO_PIN GPIO_NUM_23
 
 #include "tachoTask.h"
+#include "uartTasks.h"
 TaskHandle_t tacho;
 uint32_t counter = 0;
 void tachoTask(void *pvParam) {
@@ -16,9 +17,13 @@ void tachoTask(void *pvParam) {
   gpio_set_intr_type(FAN_TACHO_PIN, GPIO_INTR_POSEDGE);
   gpio_isr_handler_add(FAN_TACHO_PIN, tacho_interrupt, NULL);
   const TickType_t xBlockTime = pdMS_TO_TICKS(1000);
+  static const char *TX_TASK_TAG = "FAN:";
   while (true) {
     vTaskDelay(xBlockTime);
     ESP_LOGW(FAN_TACHO_TAG, "RPM= %ld", counter * 30);
+    char str[80];
+    sprintf(str, "RPM:%ld\n", counter * 30);
+    uartSendData(TX_TASK_TAG, str);
     counter = 0;
   }
 }
