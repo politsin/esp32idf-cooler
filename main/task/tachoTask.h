@@ -8,3 +8,4 @@
 
 extern TaskHandle_t tacho;
 void tachoTask(void *pvParam);
+static void IRAM_ATTR tacho_interrupt(void *arg);

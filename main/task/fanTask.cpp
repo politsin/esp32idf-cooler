@@ -48,7 +48,7 @@ void fanTask(void *pvParam) {
       // Update duty to apply the new value
       ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
       if (true) {
-        ESP_LOGW(FAN_TAG, "FAN! %lu", notify);
+        ESP_LOGW(FAN_TAG, "SET %lu", notify);
       }
     }
   }

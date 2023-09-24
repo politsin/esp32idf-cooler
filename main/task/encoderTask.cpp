@@ -12,7 +12,7 @@ using std::string;
 #include "rotary_encoder.h"
 #define ENC_TAG "ENCODER"
 #define CONFIG_REPORT_MODE_CALLBACK true
-#define CONFIG_ENCODER_DEBUG true
+#define CONFIG_ENCODER_DEBUG false
 
 // ENCODER.
 static const gpio_num_t encoderS1 = GPIO_NUM_0;
