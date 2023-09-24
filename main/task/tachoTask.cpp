@@ -8,15 +8,17 @@
 
 #include "tachoTask.h"
 TaskHandle_t tacho;
-int counter = 0;
+uint32_t counter = 0;
 void tachoTask(void *pvParam) {
   gpio_install_isr_service(0);
+  gpio_set_direction(FAN_TACHO_PIN, GPIO_MODE_INPUT);
+  gpio_set_pull_mode(FAN_TACHO_PIN, GPIO_PULLUP_ONLY);
   gpio_set_intr_type(FAN_TACHO_PIN, GPIO_INTR_POSEDGE);
   gpio_isr_handler_add(FAN_TACHO_PIN, tacho_interrupt, NULL);
   const TickType_t xBlockTime = pdMS_TO_TICKS(1000);
   while (true) {
     vTaskDelay(xBlockTime);
-    ESP_LOGW(FAN_TACHO_TAG, "RPM= %d", counter);
+    ESP_LOGW(FAN_TACHO_TAG, "RPM= %ld", counter * 30);
     counter = 0;
   }
 }

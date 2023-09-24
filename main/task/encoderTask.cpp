@@ -20,10 +20,10 @@ static const gpio_num_t encoderS2 = GPIO_NUM_36;
 static const gpio_num_t encoderBtn = GPIO_NUM_34;
 static const uint32_t debouncsEnc = 100;
 static const uint32_t debouncsBtn = 100;
-rotenc_handle_t handle = {};
+rotenc_handle_t encoder_handle = {};
 
 // RMT.
-uint32_t frequency = 10;
+uint32_t frequency = 5;
 
 TaskHandle_t encoder;
 void encoderTask(void *pvParam) {
@@ -62,17 +62,17 @@ void configureEncoderPins() {
   gpio_install_isr_service(0);
   // Initialize the handle instance of the rotary device,
   // by default it uses 1 mS for the debounce time.
-  rotenc_init(&handle, encoderS1, encoderS2, debouncsEnc);
+  rotenc_init(&encoder_handle, encoderS1, encoderS2, debouncsEnc);
   // Flip direction.
-  ESP_ERROR_CHECK(rotenc_flip_direction(&handle));
-  rotenc_init_button(&handle, encoderBtn, debouncsBtn, button_callback);
+  ESP_ERROR_CHECK(rotenc_flip_direction(&encoder_handle));
+  rotenc_init_button(&encoder_handle, encoderBtn, debouncsBtn, button_callback);
 
 #if CONFIG_REPORT_MODE_QUEUE
   ESP_LOGI(ENC_TAG, "Report mode by freertos queue");
   ESP_ERROR_CHECK(rotenc_set_event_queue(&handle, 1000));
 #elif CONFIG_REPORT_MODE_CALLBACK
   ESP_LOGI(ENC_TAG, "Report mode by function callback");
-  ESP_ERROR_CHECK(rotenc_set_event_callback(&handle, event_callback));
+  ESP_ERROR_CHECK(rotenc_set_event_callback(&encoder_handle, event_callback));
 #elif CONFIG_REPORT_MODE_POLLING
   ESP_LOGI(ENC_TAG, "Report mode by polling");
 #endif
@@ -80,15 +80,21 @@ void configureEncoderPins() {
 
 static void button_callback(void *arg) {
   // rotenc_handle_t *handle = (rotenc_handle_t *)arg;
-  frequency = 0;
+  frequency = 50;
+  rotenc_reset(&encoder_handle);
+  (&encoder_handle)->state.position = frequency;
+  xTaskNotify(fan, frequency, eSetValueWithOverwrite);
   ESP_LOGI(ENC_TAG, "Push button");
 }
+
 static void event_callback(rotenc_event_t event) {
-  frequency = event.position * 10;
+  frequency = event.position;
   if (event.position < 0) {
+    rotenc_reset(&encoder_handle);
     frequency = 0;
   }
-  if (event.position > 10) {
+  else if(event.position >= 100) {
+    (&encoder_handle)->state.position = 100;
     frequency = 100;
   }
   xTaskNotify(fan, frequency, eSetValueWithOverwrite);
