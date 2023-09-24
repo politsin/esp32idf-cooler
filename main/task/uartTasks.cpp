@@ -1,12 +1,10 @@
 #define TXD_PIN (GPIO_NUM_14)
 #define RXD_PIN (GPIO_NUM_12)
 
-
 #include "driver/uart.h"
 #include "string.h"
 #define UART_TAG "UART"
 static const int RX_BUF_SIZE = 1024;
-
 
 #include "uartTasks.h"
 TaskHandle_t tx;
@@ -49,13 +47,14 @@ void rxTask(void *pvParam) {
   static const char *RX_TASK_TAG = "RX";
   esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
   uint8_t *data = (uint8_t *)malloc(RX_BUF_SIZE + 1);
+  const TickType_t xBlockTime = pdMS_TO_TICKS(300);
+  int rxBytes;
   while (1) {
-    const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE,
-                                        1000 / portTICK_PERIOD_MS);
+    int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, xBlockTime);
     if (rxBytes > 0) {
       data[rxBytes] = 0;
-      ESP_LOGI(RX_TASK_TAG, "Read %d bytes: '%s'", rxBytes, data);
-      ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_INFO);
+      ESP_LOGI(RX_TASK_TAG, "Read %d bytes: >>>%s<<<", rxBytes, data);
+      ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_ERROR);
     }
   }
   free(data);
